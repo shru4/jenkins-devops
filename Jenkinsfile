@@ -7,9 +7,11 @@ pipeline {
 	}
 	//agent { docker { image 'node:13.8'} }
 	stages {
-		stage('Checkput') {
+		stages {
+		stage('Checkout') {
 			steps {
 				sh 'mvn --version'
+				//sh 'docker version'
 				echo "Build"
 				echo "PATH - $PATH"
 				echo "BUILD_NUMBER - $env.BUILD_NUMBER"
@@ -36,16 +38,43 @@ pipeline {
 				sh "mvn failsafe:integration-test failsafe:verify"
 			}
 		}
-	}
+
+		stage('Package') {
+			steps {
+				sh "mvn package -DskipTests"
+			}
+		}
+
+		stage('Build Docker Image') {
+			steps {
+				script {
+					dockerImage = docker.build("shru4/currency-exchange-devops:${env.BUILD_TAG}")
+				}
+
+			}
+		}
+
+		stage('Push Docker Image') {
+			steps {
+				script {
+					docker.withRegistry('', 'dockerhub') {
+						dockerImage.push();
+						dockerImage.push('latest');
+					}
+				}
+			}
+		}
+	} 
+	
 	post {
 		always {
-			echo "Always"
+			echo 'Im awesome. I run always'
 		}
 		success {
-			echo "Success"
+			echo 'I run when you are successful'
 		}
 		failure {
-			echo "Failure"
+			echo 'I run when you fail'
 		}
 	}
 }
