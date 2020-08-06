@@ -7,7 +7,7 @@ pipeline {
 	}
 	//agent { docker { image 'node:13.8'} }
 	stages {
-		stage('Build') {
+		stage('Checkput') {
 			steps {
 				sh 'mvn --version'
 				echo "Build"
@@ -19,14 +19,21 @@ pipeline {
 				echo "BUILD_URL - $env.BUILD_URL"
 			}
 		}
-		stage('Test') {
+		stage('Compile') {
 			steps {
-				echo "Test"
+				sh "mvn clean compile"
 			}
 		}
+
+		stage('Test') {
+			steps {
+				sh "mvn test"
+			}
+		}
+
 		stage('Integration Test') {
 			steps {
-				echo "Integration Test"
+				sh "mvn failsafe:integration-test failsafe:verify"
 			}
 		}
 	}
