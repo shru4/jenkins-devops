@@ -1,4 +1,4 @@
-/SCRIPTED
+//SCRIPTED
 
 //DECLARATIVE
 pipeline {
