@@ -53,7 +53,7 @@ pipeline {
 			steps {
 				//"docker build -t in28min/currency-exchange-devops:$env.BUILD_TAG"
 				script {
-					dockerImage = docker.build("ishru4/currency-exchange-devops:${env.BUILD_TAG}")
+					dockerImage = docker.build("shru4/currency-exchange-devops:${env.BUILD_TAG}")
 				}
 
 			}
